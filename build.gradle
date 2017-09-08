@@ -1,8 +1,11 @@
 plugins {
     id 'java'
     id 'com.github.hierynomus.license' version '0.13.0'
+    id "com.xebialabs.xldp" version "1.0.5"
     id 'com.github.hierynomus.jython' version '0.6.0'
 }
+
+version = "1.0.0"
 
 dependencies {
     jython ':requests:2.13.0'

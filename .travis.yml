@@ -1,0 +1,15 @@
+language: java
+deploy:
+  provider: releases
+  api_key:
+    secure: Bmfxd6mDWP9ldJdkjdhuMqsbytM1X5guIs4H30LycmgaQDSKaaOXbpqCtIIqCj8NBXNH0vR5tQybwOe1Vu9Y7K9XjO9AffjbAgfqApHZIkgcbiDmwl8cj4pjWaJjIK5TKBUEwsnQD4GHc5OWfMleuTdA9DdfktUkjD+Q7wp+hbs=
+  file: build/distributions/xld-apigee-plugin-1.0.0.xldp
+  skip_cleanup: true
+  on:
+    all_branches: true
+    tags: true
+    repo: xebialabs-community/xld-apigee-plugin
+notifications:
+  hipchat:
+    rooms:
+      secure: BeTWK/zuLGB6F0M5S2dMMhlTAVrP8r4CNiFdCpog/v4A+e06BNvCz1lSxopN4qMGrVGu5XemZylcmS5uYlQr0KlGvedM7wNgij9QK/xPf7h3+hqOGKRq1FwBZHP3Xk/01k35UQXU6pimrCuIe6oDDM4Tnc5Eqb+/Ie0bWEOM2hA=

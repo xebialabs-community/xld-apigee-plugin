@@ -67,7 +67,7 @@ class ApigeeClient(object):
         url = base_url + "/v1/o/" + self.organization.name
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + api_proxy
-        url = url + "/revisions/" + api_proxy_revision[3:]
+        url = url + "/revisions/" + api_proxy_revision
         return url
 
     def parse_revision(self, api_proxy_revision):

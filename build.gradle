@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id 'com.github.hierynomus.license' version '0.13.0'
+    id 'com.github.hierynomus.jython' version '0.6.0'
+}
+
+dependencies {
+    jython ':requests:2.13.0'
+}
+
+license {
+  header rootProject.file('License.md')
+  ignoreFailures = true
+  strictCheck = false
+  ext.year = Calendar.getInstance().get(Calendar.YEAR)
+  ext.name = 'XEBIALABS'
+}

@@ -11,7 +11,10 @@
 import requests
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
 import onetimepass as otp
-import ast
+
+
+# The variable authorizationHeader has always the same value
+authorizationHeader = "ZWRnZWNsaTplZGdlY2xpc2VjcmV0"
 
 
 def setup_urllib():
@@ -21,6 +24,7 @@ def setup_urllib():
 
 
 class ApigeeClient(object):
+
     def __init__(self, organization, target_environment):
         self.organization = organization
         self.target_environment = target_environment
@@ -81,17 +85,16 @@ class ApigeeClient(object):
         authorization_headers = {}
         if self.mfa:
             my_token = self.create_one_time_password()
-            headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'}
-            params = "{'username': '%s', 'password': '%s', 'grant_type': 'password', 'mfa_token': '%s'}" % (self.organization.username, self.organization.password, my_token)
-            resp = requests.post(self.sso_login_url, params=ast.literal_eval(params), verify=False, headers=headers)
+            headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ' + authorizationHeader}
+            params = {'username': self.organization.username, 'password': self.organization.password, 'grant_type': 'password', 'mfa_token': my_token}
+            resp = requests.post(self.sso_login_url, params=params, verify=False, headers=headers)
             if resp.status_code > 399:
                 print(resp.status_code)
                 print(resp.json())
                 raise Exception("Error during creating authorization header")
             data = resp.json()
             access_token = data['access_token']
-            authorization_headers = "{'Authorization': 'Bearer %s'}" % (access_token)
-            authorization_headers = ast.literal_eval(authorization_headers)
+            authorization_headers = {'Authorization': 'Bearer ' + access_token}
         return authorization_headers
 
     def build_url(self, api_proxy, api_proxy_revision):

@@ -5,11 +5,11 @@ plugins {
     id 'com.github.hierynomus.jython' version '0.6.0'
 }
 
-version = "1.0.1"
+version = "1.0.2"
 
 dependencies {
-    jython ':requests:2.13.0'
-}
+    jython ":requests:2.13.0"
+    jython ":onetimepass:1.0.1"}
 
 license {
   header rootProject.file('License.md')

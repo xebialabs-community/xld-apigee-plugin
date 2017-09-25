@@ -10,6 +10,8 @@
 
 import requests
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
+import onetimepass as otp
+import ast
 
 
 def setup_urllib():
@@ -23,24 +25,28 @@ class ApigeeClient(object):
         self.organization = organization
         self.target_environment = target_environment
         self.authentication = (organization.username, organization.password)
+        self.mfa = organization.mfa
+        self.sso_login_url = "https://login.apigee.com/oauth/token"
 
     def deploy(self, api_proxy, api_proxy_revision):
         revision = self.parse_revision(api_proxy_revision)
         url = self.build_url(api_proxy, revision)
         url = url + "/deployments"
         params = {'override': 'true'}
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        authorization_headers = self.build_authorization_header()
         print(url)
-        resp = requests.post(url,
-                auth=self.authentication,
-                params=params,
-                verify=False,
-                headers=headers)
+        headers = authorization_headers
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.post(url, params=params, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.post(url, auth=self.authentication, params=params, verify=False, headers=headers)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during deployment of Apigee API Proxy: %s/%s to environment %s" %
-                (api_proxy, api_proxy_revision, self.target_environment))
+            raise Exception("Error during deployment of Apigee API Proxy: %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         return resp
 
     def undeploy(self, api_proxy, api_proxy_revision):
@@ -48,13 +54,45 @@ class ApigeeClient(object):
         url = self.build_url(api_proxy, revision)
         url = url + "/deployments"
         print(url)
-        resp = requests.delete(url, verify=False, auth=self.authentication)
+        authorization_headers = self.build_authorization_header()
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.delete(url, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.delete(url, verify=False, auth=self.authentication)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during undeployment of Apigee API Proxy: %s/%s from environment %s" %
-                (api_proxy, api_proxy_revision, self.target_environment))
+            raise Exception("Error during undeployment of Apigee API Proxy: %s/%s from environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         return resp
+
+    def create_one_time_password(self):
+        my_secret = self.organization.secretKey
+        if my_secret is None:
+            raise Exception("Error during creating one time password. The secret key is empty.")
+        my_token = otp.get_totp(my_secret)
+        if len(str(my_token)) == 5:
+            my_token = "0%s" % my_token
+        return my_token
+
+    def build_authorization_header(self):
+        authorization_headers = {}
+        if self.mfa:
+            my_token = self.create_one_time_password()
+            headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'}
+            params = "{'username': '%s', 'password': '%s', 'grant_type': 'password', 'mfa_token': '%s'}" % (self.organization.username, self.organization.password, my_token)
+            resp = requests.post(self.sso_login_url, params=ast.literal_eval(params), verify=False, headers=headers)
+            if resp.status_code > 399:
+                print(resp.status_code)
+                print(resp.json())
+                raise Exception("Error during creating authorization header")
+            data = resp.json()
+            access_token = data['access_token']
+            authorization_headers = "{'Authorization': 'Bearer %s'}" % (access_token)
+            authorization_headers = ast.literal_eval(authorization_headers)
+        return authorization_headers
 
     def build_url(self, api_proxy, api_proxy_revision):
         base_url = self.organization.url

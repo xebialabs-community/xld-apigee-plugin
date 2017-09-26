@@ -52,3 +52,8 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 + `apigee.Environment`
 + `apigee.ApiProxy`
 + `apigee.ApiProxySpec`
+
+![Screenshot of Apigee Organization](images/apigee-Organization.jpg)
+![Screenshot of Environment](images/environment.jpg)
+![Screenshot of Apigee ApiProxySpec](images/apigee-ApiProxySpec.jpg)
+![Screenshot of Deployment](images/deployment.jpg)

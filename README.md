@@ -19,10 +19,10 @@ The Apigee plugin is a XL Deploy plugin that adds capability for deploying appli
 
 [xld-apigee-plugin-travis-image]: https://travis-ci.org/xebialabs-community/xld-apigee-plugin.svg?branch=master
 [xld-apigee-plugin-travis-url]: https://travis-ci.org/xebialabs-community/xld-apigee-plugin
-[xld-apigee-plugin-codacy-image]: https://api.codacy.com/project/badge/grade/869116a652014efe81a5ff8380b0a6a9    
+[xld-apigee-plugin-codacy-image]: https://api.codacy.com/project/badge/Grade/db7f22096a014ff0974def7351b21d73    
 [xld-apigee-plugin-codacy-url]: https://www.codacy.com/app/ltutar/xld-apigee-plugin
-[xld-apigee-plugin-code-climate-image]: https://codeclimate.com/github/xebialabs-community/xld-apigee-plugin/badges/gpa.svg
-[xld-apigee-plugin-code-climate-url]: https://codeclimate.com/github/xebialabs-community/xld-apigee-plugin
+[xld-apigee-plugin-code-climate-image]: https://codeclimate.com/github/ltutar/xld-apigee-plugin/badges/gpa.svg
+[xld-apigee-plugin-code-climate-url]: https://codeclimate.com/github/ltutar/xld-apigee-plugin
 [xld-apigee-plugin-license-image]: https://img.shields.io/badge/License-MIT-yellow.svg
 [xld-apigee-plugin-license-url]: https://opensource.org/licenses/MIT
 [xld-apigee-plugin-downloads-image]: https://img.shields.io/github/downloads/xebialabs-community/xld-apigee-plugin/total.svg

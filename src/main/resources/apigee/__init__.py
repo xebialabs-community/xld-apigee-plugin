@@ -82,6 +82,8 @@ class ApigeeClient(object):
         return my_token
 
     def build_authorization_header(self):
+        # Check the connection with an http head request. Otherwise, the password is printed when mfa is on.
+        resp = requests.head(self.sso_login_url, verify=False)
         authorization_headers = {}
         if self.mfa:
             my_token = self.create_one_time_password()

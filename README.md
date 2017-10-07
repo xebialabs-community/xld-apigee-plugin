@@ -44,7 +44,8 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 2. Go to `Repository - Infrastructure - <Apigee Organization>`, create a new `apigee.Environment` with the Apigee environment as name i.e. prod.
 3. Repeat the previous step for all the Apigee environments that belong to this Apigee organization.
 3. Create an environment under `Repository - Environments` and add the corresponding `<Apigee Environment>` as container.
-4. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxySpec` as deployables. The deployment package name should start with `rev<revision number>` i.e. rev1 or `<revision number>` i.e. 1. The deployable name should be the same as the Apigee Proxy name i.e. oauth.
+4. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxySpec` as deployables. The deployment package name should start with `rev<revision number>` i.e. rev1 or `<revision number>` i.e. 1. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments within the same organization. This deployable assumes that the revision number already exists in Apigee repository.
+5. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
 5. Start deploying
 
 # Types #
@@ -52,8 +53,11 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 + `apigee.Environment`
 + `apigee.ApiProxy`
 + `apigee.ApiProxySpec`
++ `apigee.DeployedApiProxyZip`
++ `apigee.ApiProxyZip`
 
 ![Screenshot of Apigee Organization](images/apigee-Organization.jpg)
 ![Screenshot of Environment](images/environment.jpg)
 ![Screenshot of Apigee ApiProxySpec](images/apigee-ApiProxySpec.jpg)
+![Screenshot of Apigee ApiProxySpec](images/apigee.ApiProxyZip.jpg)
 ![Screenshot of Deployment](images/deployment.jpg)

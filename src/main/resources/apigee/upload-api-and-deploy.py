@@ -12,7 +12,7 @@ from apigee import ApigeeClient, setup_urllib
 
 setup_urllib()
 
-client = ApigeeClient(deployed.container.org, deployed.container.name)
+client = ApigeeClient(deployed.container.org, deployed.container)
 response = client.import_proxy(deployed.deployable.name, deployed.file.path)
 print(response.json())
 revision_name = response.json()['revision']

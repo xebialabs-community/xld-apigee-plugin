@@ -12,6 +12,6 @@ from apigee import ApigeeClient, setup_urllib
 
 setup_urllib()
 
-client = ApigeeClient(deployed.container.org, deployed.container.name)
+client = ApigeeClient(deployed.container.org, deployed.container)
 response = client.deploy(deployed.deployable.name, revision_name)
 print(response.json())

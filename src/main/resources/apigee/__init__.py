@@ -27,10 +27,51 @@ class ApigeeClient(object):
 
     def __init__(self, organization, target_environment):
         self.organization = organization
-        self.target_environment = target_environment
+        self.target_environment = target_environment.environmentName
         self.authentication = (organization.username, organization.password)
         self.mfa = organization.mfa
         self.sso_login_url = "https://login.apigee.com/oauth/token"
+        self.proxy_dict = None
+        if organization.proxy:
+            address = organization.proxy.address
+            idx = address.index(':')
+            self.proxy_dict = { address[0:idx]: address + ":" + str(organization.proxy.port) }
+
+    def import_proxy(self, api_proxy, path):
+        url = self.build_org_url() + '/apis'
+        params = {'action': 'import', 'name': api_proxy}
+        authorization_headers = self.build_authorization_header()
+        print(url)
+        headers = authorization_headers
+        filename = path.split('/')[-1]
+        data = {'file': (filename, open(path, 'rb'), 'application/binary')}
+        headers['Content-Type'] = 'multipart/form-data'
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        return resp
+
+    def delete_revision(self, api_proxy, api_proxy_revision):
+        url = self.build_org_url()
+        url = url + "/apis/" + api_proxy
+        url = url + "/revisions/" + api_proxy_revision
+        print(url)
+        authorization_headers = self.build_authorization_header()
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during removing of Apigee API Proxy: %s/%s" % (api_proxy, api_proxy_revision))
+        return resp
 
     def import_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'
@@ -79,10 +120,10 @@ class ApigeeClient(object):
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
         if self.mfa:
             print("Multi factor authentication is on")
-            resp = requests.post(url, params=params, verify=False, headers=headers)
+            resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
         else:
             print("Multi factor authentication is off")
-            resp = requests.post(url, auth=self.authentication, params=params, verify=False, headers=headers)
+            resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
@@ -98,10 +139,10 @@ class ApigeeClient(object):
         headers = authorization_headers
         if self.mfa:
             print("Multi factor authentication is on")
-            resp = requests.delete(url, verify=False, headers=headers)
+            resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
         else:
             print("Multi factor authentication is off")
-            resp = requests.delete(url, verify=False, auth=self.authentication)
+            resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
@@ -119,13 +160,13 @@ class ApigeeClient(object):
 
     def build_authorization_header(self):
         # Check the connection with an http head request. Otherwise, the password is printed when mfa is on.
-        resp = requests.head(self.sso_login_url, verify=False)
+        resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False)
         authorization_headers = {}
         if self.mfa:
             my_token = self.create_one_time_password()
             headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ' + authorizationHeader}
             params = {'username': self.organization.username, 'password': self.organization.password, 'grant_type': 'password', 'mfa_token': my_token}
-            resp = requests.post(self.sso_login_url, params=params, verify=False, headers=headers)
+            resp = requests.post(self.sso_login_url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
             if resp.status_code > 399:
                 print(resp.status_code)
                 print(resp.json())

@@ -137,11 +137,7 @@ class ApigeeClient(object):
 
     def build_org_url(self):
         base_url = self.organization.url
-<<<<<<< HEAD
-        url = base_url + "/v1/organizations/" + self.organization.name
-=======
         url = base_url + "/v1/organizations/" + self.organization.organizationName
->>>>>>> xebialabs-community/master
         return url
 
     def build_url(self, api_proxy, api_proxy_revision):

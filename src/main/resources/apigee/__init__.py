@@ -32,6 +32,42 @@ class ApigeeClient(object):
         self.mfa = organization.mfa
         self.sso_login_url = "https://login.apigee.com/oauth/token"
 
+    def import_proxy(self, api_proxy, path):
+        url = self.build_org_url() + '/apis'
+        params = {'action': 'import', 'name': api_proxy}
+        authorization_headers = self.build_authorization_header()
+        print(url)
+        headers = authorization_headers
+        filename = path.split('/')[-1]
+        data = {'file': (filename, open(path, 'rb'), 'application/binary')}
+        headers['Content-Type'] = 'multipart/form-data'
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.post(url, params=params, verify=False, headers=headers, files=data)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.post(url, auth=self.authentication, params=params, verify=False, headers=headers, files=data)
+        return resp
+
+    def delete_revision(self, api_proxy, api_proxy_revision):
+        url = self.build_org_url()
+        url = url + "/apis/" + api_proxy
+        url = url + "/revisions/" + api_proxy_revision
+        print(url)
+        authorization_headers = self.build_authorization_header()
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.delete(url, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.delete(url, verify=False, auth=self.authentication)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during removing of Apigee API Proxy: %s/%s" % (api_proxy, api_proxy_revision))
+        return resp
+
     def deploy(self, api_proxy, api_proxy_revision):
         revision = self.parse_revision(api_proxy_revision)
         url = self.build_url(api_proxy, revision)
@@ -99,9 +135,13 @@ class ApigeeClient(object):
             authorization_headers = {'Authorization': 'Bearer ' + access_token}
         return authorization_headers
 
-    def build_url(self, api_proxy, api_proxy_revision):
+    def build_org_url(self):
         base_url = self.organization.url
-        url = base_url + "/v1/o/" + self.organization.name
+        url = base_url + "/v1/organizations/" + self.organization.name
+        return url
+
+    def build_url(self, api_proxy, api_proxy_revision):
+        url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + api_proxy
         url = url + "/revisions/" + api_proxy_revision

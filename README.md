@@ -40,7 +40,7 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 
 # Usage #
 
-1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` with the Apigee organization as name i.e. ltutar-trial.
+1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` and fill in the properties.
 2. Go to `Repository - Infrastructure - <Apigee Organization>`, create a new `apigee.Environment` with the Apigee environment as name i.e. prod.
 3. Repeat the previous step for all the Apigee environments that belong to this Apigee organization.
 3. Create an environment under `Repository - Environments` and add the corresponding `<Apigee Environment>` as container.

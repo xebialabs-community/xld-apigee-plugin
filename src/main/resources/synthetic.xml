@@ -13,6 +13,7 @@
 <synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd" xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <type type="apigee.Organization" extends="udm.BaseConfigurationItem" root="INFRASTRUCTURE">
+    <property name="organizationName" description="The Apigee organization name" />
     <property name="url" default="https://api.enterprise.apigee.com" description="e.g. https://api.enterprise.apigee.com" />
     <property name="username" description="The username to connect to this Apigee organization" />
     <property name="password" password="true" description="The password to connect to this Apigee organization" />

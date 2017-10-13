@@ -36,8 +36,6 @@
 
   <type type="apigee.DeployedApiProxyZip" extends="udm.BaseDeployedArtifact" deployable-type="apigee.ApiProxyZip" container-type="apigee.Environment">
     <property name="revisionNumber" required="false" description="Automatically filled in after deployment"/>
-<<<<<<< HEAD
-=======
   </type>
 
   <type type="http.ProxyConfiguration" extends="udm.Configuration" root="CONFIGURATION">
@@ -50,7 +48,6 @@
     </property>
     <property name="proxyHost" description="The host name of the proxy" />
     <property name="proxyPort" description="The port on which the proxy is reachable" default="8080" />
->>>>>>> xebialabs-community/master
   </type>
 
 </synthetic>

@@ -15,6 +15,7 @@
   <type type="apigee.Organization" extends="udm.BaseConfigurationItem" root="INFRASTRUCTURE">
     <property name="organizationName" description="The Apigee organization name" />
     <property name="url" default="https://api.enterprise.apigee.com" description="e.g. https://api.enterprise.apigee.com" />
+    <property name="proxy" required="false" kind="ci" referenced-type="http.ProxyConfiguration" description="The proxy to connect through" />
     <property name="username" description="The username to connect to this Apigee organization" />
     <property name="password" password="true" description="The password to connect to this Apigee organization" />
     <property name="mfa" kind="boolean" default="False" description="Multi factor authentication is on" />
@@ -35,6 +36,18 @@
 
   <type type="apigee.DeployedApiProxyZip" extends="udm.BaseDeployedArtifact" deployable-type="apigee.ApiProxyZip" container-type="apigee.Environment">
     <property name="revisionNumber" required="false" description="Automatically filled in after deployment"/>
+  </type>
+
+  <type type="http.ProxyConfiguration" extends="udm.Configuration" root="CONFIGURATION">
+    <property name="proxyProtocol" description="The protocol of the proxy" kind="enum">
+      <enum-values>
+        <value>ftp</value>
+        <value>http</value>
+        <value>https</value>
+      </enum-values>
+    </property>
+    <property name="proxyHost" description="The host name of the proxy" />
+    <property name="proxyPort" description="The port on which the proxy is reachable" default="8080" />
   </type>
 
 </synthetic>

@@ -25,9 +25,10 @@ def setup_urllib():
 
 class ApigeeClient(object):
 
-    def __init__(self, organization, target_environment):
+    def __init__(self, organization, target_environment=None):
         self.organization = organization
-        self.target_environment = target_environment.environmentName
+        if target_environment is not None:
+            self.target_environment = target_environment.environmentName
         self.authentication = (organization.username, organization.password)
         self.mfa = organization.mfa
         self.sso_login_url = "https://login.apigee.com/oauth/token"
@@ -36,6 +37,19 @@ class ApigeeClient(object):
             address = organization.proxy.address
             idx = address.index(':')
             self.proxy_dict = { address[0:idx]: address + ":" + str(organization.proxy.port) }
+
+    def check_organization_connection(self):
+        url = self.build_org_url()
+        authorization_headers = self.build_authorization_header()
+        print(url)
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+        return resp
 
     def import_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'

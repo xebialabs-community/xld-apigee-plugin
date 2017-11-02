@@ -49,6 +49,10 @@ class ApigeeClient(object):
         else:
             print("Multi factor authentication is off")
             resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during checking the connection of Apigee organization")
         return resp
 
     def import_proxy(self, api_proxy, path):
@@ -66,6 +70,10 @@ class ApigeeClient(object):
         else:
             print("Multi factor authentication is off")
             resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during importing of Apigee API Proxy: %s" % (api_proxy))
         return resp
 
     def delete_revision(self, api_proxy, api_proxy_revision):

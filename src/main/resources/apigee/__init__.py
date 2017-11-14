@@ -25,9 +25,10 @@ def setup_urllib():
 
 class ApigeeClient(object):
 
-    def __init__(self, organization, target_environment):
+    def __init__(self, organization, target_environment=None):
         self.organization = organization
-        self.target_environment = target_environment.environmentName
+        if target_environment is not None:
+            self.target_environment = target_environment.environmentName
         self.authentication = (organization.username, organization.password)
         self.mfa = organization.mfa
         self.sso_login_url = "https://login.apigee.com/oauth/token"
@@ -35,7 +36,24 @@ class ApigeeClient(object):
         if organization.proxy:
             address = organization.proxy.address
             idx = address.index(':')
-            self.proxy_dict = { address[0:idx]: address + ":" + str(organization.proxy.port) }
+            self.proxy_dict = {address[0:idx]: address + ":" + str(organization.proxy.port)}
+
+    def check_organization_connection(self):
+        url = self.build_org_url()
+        authorization_headers = self.build_authorization_header()
+        print(url)
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during checking the connection of Apigee organization")
+        return resp
 
     def import_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'
@@ -52,6 +70,10 @@ class ApigeeClient(object):
         else:
             print("Multi factor authentication is off")
             resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during importing of Apigee API Proxy: %s" % (api_proxy))
         return resp
 
     def delete_revision(self, api_proxy, api_proxy_revision):

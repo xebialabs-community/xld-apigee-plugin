@@ -1,15 +1,4 @@
-# Preface #
-
-This document describes the functionality provided by the Apigee plugin.
-
-See the **XL Deploy Reference Manual** for background information on XL Deploy and deployment concepts.
-
-# Overview #
-
-The Apigee plugin is a XL Deploy plugin that adds capability for deploying applications to an Apigee environment within an Apigee Organization.
-
-
-# CI status #
+# XL Deploy Apigee plugin
 
 [![Build Status][xld-apigee-plugin-travis-image] ][xld-apigee-plugin-travis-url]
 [![Codacy Badge][xld-apigee-plugin-codacy-image] ][xld-apigee-plugin-codacy-url]
@@ -27,18 +16,28 @@ The Apigee plugin is a XL Deploy plugin that adds capability for deploying appli
 [xld-apigee-plugin-license-url]: https://opensource.org/licenses/MIT
 [xld-apigee-plugin-downloads-image]: https://img.shields.io/github/downloads/xebialabs-community/xld-apigee-plugin/total.svg
 
+## Preface
 
-# Requirements #
+This document describes the functionality provided by the Apigee plugin.
+
+See the [XL Deploy reference manual](https://docs.xebialabs.com/xl-deploy) for background information on XL Deploy and deployment automation concepts.  
+
+## Overview
+
+The Apigee plugin is a XL Deploy plugin that adds capability for deploying applications to an Apigee environment within an Apigee Organization.
+
+## Requirements
 
 * **Requirements**
 	* **XL Deploy** 7.0.1+
 
-# Installation #
+## Installation
 
-Place the plugin JAR file into your `SERVER_HOME/plugins` directory. 
+* Copy the latest JAR file from the [releases page](https://github.com/xebialabs-community/xld-apigee-plugin/releases) into the `XL_DEPLOY_SERVER/plugins` directory.
+* Restart the XL Deploy server.
 
 
-# Usage #
+## Usage
 
 1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` and fill in the properties.
 2. Go to `Repository - Infrastructure - <Apigee Organization>`, create a new `apigee.Environment` and fill in the Apigee environment name.
@@ -48,7 +47,7 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 5. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
 5. Start deploying.
 
-# Types #
+## Types
 + `apigee.Organization`
 + `apigee.Environment`
 + `apigee.ApiProxy`

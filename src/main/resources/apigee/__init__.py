@@ -55,7 +55,7 @@ class ApigeeClient(object):
             raise Exception("Error during checking the connection of Apigee organization")
         return resp
 
-    def import_proxy(self, api_proxy, path):
+    def import_api_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'
         params = {'action': 'import', 'name': api_proxy}
         authorization_headers = self.build_authorization_header()
@@ -73,12 +73,41 @@ class ApigeeClient(object):
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during importing of Apigee API Proxy: %s" % (api_proxy))
+            raise Exception("Error during importing of Apigee: %s" % (api_proxy))
         return resp
 
-    def delete_revision(self, api_proxy, api_proxy_revision):
+    def import_shared_flow(self, shared_flow, path):
+        url = self.build_org_url() + '/sharedflows'
+        params = {'action': 'import', 'name': shared_flow}
+        authorization_headers = self.build_authorization_header()
+        print(url)
+        headers = authorization_headers
+        filename = path.split('/')[-1]
+        data = {'file': (filename, open(path, 'rb'), 'application/binary')}
+        headers['Content-Type'] = 'multipart/form-data'
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during importing of Apigee: %s" % (api_proxy))
+        return resp
+
+    def delete_api_proxy_revision(self, api_proxy, api_proxy_revision):
         url = self.build_org_url()
         url = url + "/apis/" + api_proxy
+        return self.delete_revision(url, api_proxy, api_proxy_revision)
+
+    def delete_shared_flow_revision(self, shared_flow, shared_flow_revision):
+        url = self.build_org_url()
+        url = url + "/sharedflows/" + shared_flow
+        return self.delete_revision(url, shared_flow, shared_flow_revision)
+
+    def delete_revision(self, url, api_proxy, api_proxy_revision):
         url = url + "/revisions/" + api_proxy_revision
         print(url)
         authorization_headers = self.build_authorization_header()
@@ -92,12 +121,20 @@ class ApigeeClient(object):
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during removing of Apigee API Proxy: %s/%s" % (api_proxy, api_proxy_revision))
+            raise Exception("Error during removing of Apigee: %s/%s" % (api_proxy, api_proxy_revision))
         return resp
 
-    def deploy(self, api_proxy, api_proxy_revision):
+    def deploy_api_proxy(self, api_proxy, api_proxy_revision):
         revision = self.parse_revision(api_proxy_revision)
-        url = self.build_url(api_proxy, revision)
+        url = self.build_api_proxy_url(api_proxy, revision)
+        return self.deploy(url, api_proxy, api_proxy_revision)
+
+    def deploy_shared_flow(self, shared_flow, shared_flow_revision):
+        revision = self.parse_revision(shared_flow_revision)
+        url = self.build_shared_flow_url(shared_flow, revision)
+        return self.deploy(url, shared_flow, shared_flow_revision)
+
+    def deploy(self, url, api_proxy, api_proxy_revision):
         url = url + "/deployments"
         params = {'override': 'true'}
         authorization_headers = self.build_authorization_header()
@@ -113,12 +150,20 @@ class ApigeeClient(object):
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during deployment of Apigee API Proxy: %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
+            raise Exception("Error during deployment of Apigee: %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         return resp
 
-    def undeploy(self, api_proxy, api_proxy_revision):
+    def undeploy_api_proxy(self, api_proxy, api_proxy_revision):
         revision = self.parse_revision(api_proxy_revision)
-        url = self.build_url(api_proxy, revision)
+        url = self.build_api_proxy_url(api_proxy, revision)
+        return self.undeploy(url, api_proxy, api_proxy_revision)
+
+    def undeploy_shared_flow(self, shared_flow, shared_flow_revision):
+        revision = self.parse_revision(shared_flow_revision)
+        url = self.build_shared_flow_url(shared_flow, revision)
+        return self.undeploy(url, shared_flow, shared_flow_revision)
+
+    def undeploy(self, url, api_proxy, api_proxy_revision):
         url = url + "/deployments"
         print(url)
         authorization_headers = self.build_authorization_header()
@@ -132,7 +177,7 @@ class ApigeeClient(object):
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during undeployment of Apigee API Proxy: %s/%s from environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
+            raise Exception("Error during undeployment of Apigee: %s/%s from environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         return resp
 
     def create_one_time_password(self):
@@ -167,14 +212,21 @@ class ApigeeClient(object):
         url = base_url + "/v1/organizations/" + self.organization.organizationName
         return url
 
-    def build_url(self, api_proxy, api_proxy_revision):
+    def build_api_proxy_url(self, api_proxy, api_proxy_revision):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + api_proxy
         url = url + "/revisions/" + api_proxy_revision
         return url
 
-    def parse_revision(self, api_proxy_revision):
-        if api_proxy_revision.startswith('rev'):
-            return api_proxy_revision[3:]
-        return api_proxy_revision
+    def build_shared_flow_url(self, shared_flow, shared_flow_revision):
+        url = self.build_org_url()
+        url = url + "/environments/" + self.target_environment
+        url = url + "/sharedflows/" + shared_flow
+        url = url + "/revisions/" + shared_flow_revision
+        return url
+
+    def parse_revision(self, revision):
+        if revision.startswith('rev'):
+            return revision[3:]
+        return revision

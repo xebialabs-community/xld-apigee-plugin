@@ -13,5 +13,13 @@ from apigee import ApigeeClient, setup_urllib
 setup_urllib()
 
 client = ApigeeClient(deployed.container.org, deployed.container)
-response = client.deploy(deployed.deployable.name, revision_name)
+response = client.import_api_proxy(deployed.deployable.name, deployed.file.path)
+print(response.json())
+revision_name = response.json()['revision']
+print("API proxy imported as revision number: " + revision_name)
+
+unwrapped_deployed = unwrap(deployed)
+unwrapped_deployed.setProperty("revisionNumber", revision_name)
+
+response = client.deploy_api_proxy(deployed.deployable.name, revision_name)
 print(response.json())

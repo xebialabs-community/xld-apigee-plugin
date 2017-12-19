@@ -13,5 +13,10 @@ from apigee import ApigeeClient, setup_urllib
 setup_urllib()
 
 client = ApigeeClient(previousDeployed.container.org, previousDeployed.container)
-response = client.undeploy(previousDeployed.deployable.name, revision_name)
+response = client.undeploy_api_proxy(previousDeployed.deployable.name, previousDeployed.revisionNumber)
 print(response.json())
+
+if previousDeployed.deployable.deleteApiProxyRevisionAfterUndeployment:
+    print("Delete the revision " + previousDeployed.revisionNumber)
+    response = client.delete_api_proxy_revision(previousDeployed.deployable.name, previousDeployed.revisionNumber)
+    print(response.json())

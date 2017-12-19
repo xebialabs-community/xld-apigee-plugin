@@ -3,7 +3,8 @@ deploy:
   provider: releases
   api_key:
     secure: mtmCrBESAxEOZVIfmlFbBqIP6mpCIDyRSpsaoYfP46owxUianmb/cYcDmmKK1mlzRjBiWfB4Wsd2IHcdUiZutPdQOn0h/s8PPb3Xnfp44AcYZ2e4T/4215M0VClyZqComzpqKfkAtxHunpxH/BJ7rnxIDAB//MOd+Kl87aLC3zAU/xT2sJvJ47wRbQ0xC6JWdnL4+76H3FgbREtrqUoVaJMBsTSI/w0kGmD8BhNBeefAT8bWUHCTNNh2fBr/m3TFWy1sFPTKWRWWZv/k9Hz8FwsDxHMxnFkhI17Gm3438bGWBsIWu5LpN+gc29zMtGn/ms9VHjOwT9isCx6ObrqpkN2hq8CD4Id4bNi4KbEeNPLLys62/w6Gl5+jGMESuJLyL+e23dxFI9gbvhQvSHreboXAM0CoA55YB57Kwxz/CF5uaPX8Kcr+jATl5dxCPpnCh3vXoVJSnv05XyNcW8dxPm894WINY8hvvYzvufebvOfshFZEMqjZ7y1jPbvs1ZSbiZHp/xbnX5zeJvvyMS2rt3a+Hgzw+hPPmx+FgidRPdA22MqvOVhdiQMuFxQYbzfFKr1hkY/IGcMHNPO9dGDF21WIzod0M43eNF+iP7dUiBlf7LHvIU/w8qxQ9YhdeocgWNK7VP33jmHZeXcKudL2ILglcynhw+Oi+B6t3c37a2o=
-  file: build/distributions/xld-apigee-plugin-1.0.6.xldp
+  file_glob: true
+  file: "build/distributions/xld-apigee-plugin-*.xldp"
   skip_cleanup: true
   on:
     tags: true

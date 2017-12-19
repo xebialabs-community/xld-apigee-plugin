@@ -43,10 +43,16 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` and fill in the properties.
 2. Go to `Repository - Infrastructure - <Apigee Organization>`, create a new `apigee.Environment` and fill in the Apigee environment name.
 3. Repeat the previous step for all the Apigee environments that belong to this Apigee organization.
-3. Create an environment under `Repository - Environments` and add the corresponding `<Apigee Environment>` as container.
-4. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxySpec` as deployables. The deployment package name should start with `rev<revision number>` i.e. rev1 or `<revision number>` i.e. 1. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments within the same organization. This deployable assumes that the revision number already exists in Apigee repository.
-5. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
-5. Start deploying.
+4. Create an environment under `Repository - Environments` and add the corresponding `<Apigee Environment>` as container.
+
+## Deployables ##
+
+The plugin supports three types of deployables:
+
+1. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxySpec` as deployables. This is an API proxy. The deployment package name should start with `rev<revision number>` i.e. rev1 or `<revision number>` i.e. 1. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments within the same organization. This deployable assumes that the revision number already exists in Apigee repository.
+2. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. This is an API proxy. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
+3. Create an deployment package `udm.DeploymentPackage` with `apigee.SharedFlowZip` as deployables. This is a shared flow. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteSharedFlowRevisionAfterUndeployment is set to True.
+4. Start deploying.
 
 # Types #
 + `apigee.Organization`
@@ -55,6 +61,8 @@ Place the plugin JAR file into your `SERVER_HOME/plugins` directory.
 + `apigee.ApiProxySpec`
 + `apigee.DeployedApiProxyZip`
 + `apigee.ApiProxyZip`
++ `apigee.DeployedSharedFlowZip`
++ `apigee.SharedFlowZip`
 
 ![Screenshot of Apigee Organization](images/apigee-Organization.jpg)
 ![Screenshot of Apigee Organization](images/apigee-Environment.jpg)

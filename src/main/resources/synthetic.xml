@@ -39,4 +39,12 @@
   <type type="apigee.DeployedApiProxyZip" extends="udm.BaseDeployedArtifact" deployable-type="apigee.ApiProxyZip" container-type="apigee.Environment">
     <property name="revisionNumber" required="false" description="Automatically filled in after deployment"/>
   </type>
+
+  <type type="apigee.SharedFlowZip" extends="udm.BaseDeployableArtifact">
+    <property name="deleteSharedFlowRevisionAfterUndeployment" kind="boolean" default="True" description="Delete the Shared Flow Revision from Apigee after undeployment" />
+  </type>
+
+  <type type="apigee.DeployedSharedFlowZip" extends="udm.BaseDeployedArtifact" deployable-type="apigee.SharedFlowZip" container-type="apigee.Environment">
+    <property name="revisionNumber" required="false" description="Automatically filled in after deployment"/>
+  </type>
 </synthetic>

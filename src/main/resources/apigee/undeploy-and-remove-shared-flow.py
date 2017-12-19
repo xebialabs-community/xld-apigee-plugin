@@ -13,10 +13,10 @@ from apigee import ApigeeClient, setup_urllib
 setup_urllib()
 
 client = ApigeeClient(previousDeployed.container.org, previousDeployed.container)
-response = client.undeploy(previousDeployed.deployable.name, previousDeployed.revisionNumber)
+response = client.undeploy_shared_flow(previousDeployed.deployable.name, previousDeployed.revisionNumber)
 print(response.json())
 
-if previousDeployed.deployable.deleteApiProxyRevisionAfterUndeployment:
+if previousDeployed.deployable.deleteSharedFlowRevisionAfterUndeployment:
     print("Delete the revision " + previousDeployed.revisionNumber)
-    response = client.delete_revision(previousDeployed.deployable.name, previousDeployed.revisionNumber)
+    response = client.delete_shared_flow_revision(previousDeployed.deployable.name, previousDeployed.revisionNumber)
     print(response.json())

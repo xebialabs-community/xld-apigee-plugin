@@ -1,17 +1,17 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'java'
-    id "com.github.hierynomus.license" version "0.14.0"
-    id "com.xebialabs.xldp" version "1.0.5"
-    id 'com.github.hierynomus.jython' version '0.6.0'
+  id 'java'
+  id "com.github.hierynomus.license" version "0.14.0"
+  id "com.xebialabs.xldp" version "1.0.5"
+  id 'com.github.hierynomus.jython' version '0.6.0'
+  id 'pl.allegro.tech.build.axion-release' version '1.8.1'
 }
 
-version = "1.0.7"
-
 dependencies {
-    jython ":requests:2.13.0"
-    jython ":onetimepass:1.0.1"}
+  jython ":requests:2.13.0"
+  jython ":onetimepass:1.0.1"
+}
 
 processResources.configure {
   filter ReplaceTokens, tokens: [
@@ -27,3 +27,14 @@ license {
   ext.year = Calendar.getInstance().get(Calendar.YEAR)
   ext.name = 'XEBIALABS'
 }
+
+scmVersion {
+  tag {
+    prefix = 'v'
+    versionSeparator = ''
+  }
+}
+
+project.version = scmVersion.version
+
+project.tasks.release.dependsOn(project.tasks.build)

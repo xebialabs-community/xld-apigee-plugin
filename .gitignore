@@ -1,5 +1,7 @@
 .gradle
 /build/
+temp
+supervisord.*
 
 # Ignore Gradle GUI config
 gradle-app.setting

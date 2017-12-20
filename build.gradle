@@ -13,13 +13,6 @@ dependencies {
   jython ":onetimepass:1.0.1"
 }
 
-processResources.configure {
-  filter ReplaceTokens, tokens: [
-    'project.version': version.toString(),
-    'project.name'   : rootProject.name
-  ]
-}
-
 license {
   header rootProject.file('License.md')
   ignoreFailures = true
@@ -36,5 +29,12 @@ scmVersion {
 }
 
 project.version = scmVersion.version
+
+processResources.configure {
+  filter ReplaceTokens, tokens: [
+    'project.version': version.toString(),
+    'project.name'   : rootProject.name
+  ]
+}
 
 project.tasks.release.dependsOn(project.tasks.build)

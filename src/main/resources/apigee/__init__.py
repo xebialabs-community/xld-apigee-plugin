@@ -23,6 +23,12 @@ def setup_urllib():
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
+def parse_revision(revision):
+    if revision.startswith('rev'):
+        return revision[3:]
+    return revision
+
+
 class ApigeeClient(object):
 
     def __init__(self, organization, target_environment=None):
@@ -58,27 +64,14 @@ class ApigeeClient(object):
     def import_api_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'
         params = {'action': 'import', 'name': api_proxy}
-        authorization_headers = self.build_authorization_header()
-        print(url)
-        headers = authorization_headers
-        filename = path.split('/')[-1]
-        data = {'file': (filename, open(path, 'rb'), 'application/binary')}
-        headers['Content-Type'] = 'multipart/form-data'
-        if self.mfa:
-            print("Multi factor authentication is on")
-            resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
-        else:
-            print("Multi factor authentication is off")
-            resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
-        if resp.status_code > 399:
-            print(resp.status_code)
-            print(resp.json())
-            raise Exception("Error during importing of Apigee: %s" % (api_proxy))
-        return resp
+        return self.import_sub_type(url, params, api_proxy, path)
 
     def import_shared_flow(self, shared_flow, path):
         url = self.build_org_url() + '/sharedflows'
         params = {'action': 'import', 'name': shared_flow}
+        return self.import_sub_type(url, params, shared_flow, path)
+
+    def import_sub_type(self, url, params, api_proxy, path):
         authorization_headers = self.build_authorization_header()
         print(url)
         headers = authorization_headers
@@ -125,12 +118,12 @@ class ApigeeClient(object):
         return resp
 
     def deploy_api_proxy(self, api_proxy, api_proxy_revision):
-        revision = self.parse_revision(api_proxy_revision)
+        revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         return self.deploy(url, api_proxy, api_proxy_revision)
 
     def deploy_shared_flow(self, shared_flow, shared_flow_revision):
-        revision = self.parse_revision(shared_flow_revision)
+        revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         return self.deploy(url, shared_flow, shared_flow_revision)
 
@@ -154,12 +147,12 @@ class ApigeeClient(object):
         return resp
 
     def undeploy_api_proxy(self, api_proxy, api_proxy_revision):
-        revision = self.parse_revision(api_proxy_revision)
+        revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         return self.undeploy(url, api_proxy, api_proxy_revision)
 
     def undeploy_shared_flow(self, shared_flow, shared_flow_revision):
-        revision = self.parse_revision(shared_flow_revision)
+        revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         return self.undeploy(url, shared_flow, shared_flow_revision)
 
@@ -225,8 +218,3 @@ class ApigeeClient(object):
         url = url + "/sharedflows/" + shared_flow
         url = url + "/revisions/" + shared_flow_revision
         return url
-
-    def parse_revision(self, revision):
-        if revision.startswith('rev'):
-            return revision[3:]
-        return revision

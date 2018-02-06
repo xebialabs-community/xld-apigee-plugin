@@ -9,6 +9,7 @@
 #
 
 from apigee import ApigeeClient, setup_urllib
+import json
 
 setup_urllib()
 
@@ -22,4 +23,25 @@ unwrapped_deployed = unwrap(deployed)
 unwrapped_deployed.setProperty("revisionNumber", revision_name)
 
 response = client.deploy_api_proxy(deployed.deployable.name, revision_name)
-print(response.json())
+jsonData = json.loads(response.text)
+print(jsonData)
+
+# Check if there are multiple revisions deployed
+response = client.get_revision_numbers_of_apiproxy_deployed_to_environment(deployed.deployable.name)
+jsonData = json.loads(response.text)
+print(jsonData)
+lengthOfNames = len(jsonData['revision'])
+if (lengthOfNames > 1):
+    print("There are multiple revisions of this apiproxy %s deployed to environment %s \n" % (deployed.deployable.name, deployed.container.environmentName))
+    print("We will undeploy all of these except our latest deployed revision %s \n" % (revision_name))
+    i = 0
+    while i < lengthOfNames:
+        revisionNumber = jsonData['revision'][i]['name']
+        if (revisionNumber != revision_name):
+            print("Undeploying revision  number: " + revisionNumber)
+            response = client.undeploy_api_proxy(deployed.deployable.name, revisionNumber)
+        i += 1
+    response = client.get_revision_numbers_of_apiproxy_deployed_to_environment(deployed.deployable.name)
+    jsonData = json.loads(response.text)
+    print("Deployed revision: \n")
+    print(jsonData)

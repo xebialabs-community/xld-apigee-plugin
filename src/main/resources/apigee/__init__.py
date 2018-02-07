@@ -61,6 +61,26 @@ class ApigeeClient(object):
             raise Exception("Error during checking the connection of Apigee organization")
         return resp
 
+    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
+        url = self.build_org_url()
+        url = url + "/environments/" + self.target_environment
+        url = url + "/apis/" + apiProxyName + '/deployments'
+        authorization_headers = self.build_authorization_header()
+        print("Get revision numbers: \n")
+        print(url)
+        headers = authorization_headers
+        if self.mfa:
+            print("Multi factor authentication is on")
+            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+        else:
+            print("Multi factor authentication is off")
+            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+        if resp.status_code > 399:
+            print(resp.status_code)
+            print(resp.json())
+            raise Exception("Error during checking the connection of Apigee organization")
+        return resp
+
     def import_api_proxy(self, api_proxy, path):
         url = self.build_org_url() + '/apis'
         params = {'action': 'import', 'name': api_proxy}

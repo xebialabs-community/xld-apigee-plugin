@@ -10,7 +10,6 @@
 
 import time
 import onetimepass as otp
-from requests_toolbelt import MultipartEncoder
 import requests
 import urllib3
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning

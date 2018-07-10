@@ -9,21 +9,19 @@
 #
 
 import time 
+import onetimepass as otp
 import requests
 import urllib3
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-import onetimepass as otp
 
 # The variable authorizationHeader has always the same value
 authorizationHeader = "ZWRnZWNsaTplZGdlY2xpc2VjcmV0"
-
 
 def setup_urllib():
     requests.packages.urllib3.disable_warnings(SNIMissingWarning)
     requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 
 def parse_revision(revision):
     if revision.startswith('rev'):
@@ -111,10 +109,10 @@ class ApigeeClient(object):
         return self.import_sub_type(url, params, shared_flow, path)
 
     def import_sub_type(self, url, params, api_proxy, path):
-        authorization_headers = self.build_authorization_header()
-        headers = authorization_headers
         filename = path.split('/')[-1]
         data = {'file': (filename, open(path, 'rb'), 'application/binary')}
+        authorization_headers = self.build_authorization_header()
+        headers = authorization_headers
         headers['Content-Type'] = 'multipart/form-data'
         print("Posting the file %s" % (filename))
         try:

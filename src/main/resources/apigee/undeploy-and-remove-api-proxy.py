@@ -26,4 +26,7 @@ if previousDeployed.deployable.deleteApiProxyRevisionAfterUndeployment:
         print("The response is empty")
     else:   
         print(response.text)
+else:
+    print("The property deleteApiProxyRevisionAfterUndeployment is set to False")
+    print("The revision number " + previousDeployed.revisionNumber + " of " + previousDeployed.deployable.name + " will not be deleted")
 

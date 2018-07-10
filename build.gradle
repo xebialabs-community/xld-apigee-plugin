@@ -4,8 +4,8 @@ plugins {
   id 'java'
   id "com.github.hierynomus.license" version "0.14.0"
   id "com.xebialabs.xldp" version "1.0.5"
-  id 'com.github.hierynomus.jython' version '0.6.0'
-  id 'pl.allegro.tech.build.axion-release' version '1.8.1'
+  id 'com.github.hierynomus.jython' version '0.8.0'
+  id 'pl.allegro.tech.build.axion-release' version '1.9.2'
 }
 
 dependencies {

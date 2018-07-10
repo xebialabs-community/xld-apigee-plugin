@@ -16,7 +16,7 @@ client = ApigeeClient(previousDeployed.container.org, previousDeployed.container
 response = client.undeploy_api_proxy(previousDeployed.deployable.name, previousDeployed.revisionNumber)
 if response.text == "":
     print("The response is empty")
-else:   
+else:
     print(response.text)
 
 if previousDeployed.deployable.deleteApiProxyRevisionAfterUndeployment:

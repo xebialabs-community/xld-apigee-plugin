@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-  jython ":requests:2.19.1"
+  jython ":requests:2.13.0"
   jython ":onetimepass:1.0.1"
 }
 

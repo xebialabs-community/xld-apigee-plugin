@@ -48,16 +48,13 @@ The Apigee plugin is a XL Deploy plugin that adds capability for deploying appli
 
 The plugin supports three types of deployables:
 
-1. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxySpec` as deployables. This is an API proxy. The deployment package name should start with `rev<revision number>` i.e. rev1 or `<revision number>` i.e. 1. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments within the same organization. This deployable assumes that the revision number already exists in Apigee repository.
-2. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. This is an API proxy. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
-3. Create an deployment package `udm.DeploymentPackage` with `apigee.SharedFlowZip` as deployables. This is a shared flow. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. This deployable is handy if you use different environments and different organizations. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteSharedFlowRevisionAfterUndeployment is set to True.
-4. Start deploying.
+1. Create an deployment package `udm.DeploymentPackage` with `apigee.ApiProxyZip` as deployables. This is an API proxy. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteApiProxyRevisionAfterUndeployment is set to True.
+2. Create an deployment package `udm.DeploymentPackage` with `apigee.SharedFlowZip` as deployables. This is a shared flow. The deployment package name can be any version number i.e. 2.1.3. The deployable name should be the same as the Apigee Proxy name i.e. helloworld. During deployment, the deployable (the exported revision) will be imported to Apigee and then deployed. During undeployment, the revision will be deleted if the property deleteSharedFlowRevisionAfterUndeployment is set to True.
+3. Start deploying.
 
 ## Types
 + `apigee.Organization`
 + `apigee.Environment`
-+ `apigee.ApiProxy`
-+ `apigee.ApiProxySpec`
 + `apigee.DeployedApiProxyZip`
 + `apigee.ApiProxyZip`
 + `apigee.DeployedSharedFlowZip`
@@ -66,6 +63,5 @@ The plugin supports three types of deployables:
 ![Screenshot of Apigee Organization](images/apigee-Organization.jpg)
 ![Screenshot of Apigee Organization](images/apigee-Environment.jpg)
 ![Screenshot of Environment](images/environment.jpg)
-![Screenshot of Apigee ApiProxySpec](images/apigee-ApiProxySpec.jpg)
 ![Screenshot of Apigee ApiProxySpec](images/apigee.ApiProxyZip.jpg)
 ![Screenshot of Deployment](images/deployment.jpg)

@@ -14,9 +14,16 @@ setup_urllib()
 
 client = ApigeeClient(previousDeployed.container.org, previousDeployed.container)
 response = client.undeploy_shared_flow(previousDeployed.deployable.name, previousDeployed.revisionNumber)
-print(response.json())
+if response.text == "":
+    print("The response is empty")
+else:
+    print(response.text)
 
 if previousDeployed.deployable.deleteSharedFlowRevisionAfterUndeployment:
-    print("Delete the revision " + previousDeployed.revisionNumber)
+    print("Delete revision number " + previousDeployed.revisionNumber)
     response = client.delete_shared_flow_revision(previousDeployed.deployable.name, previousDeployed.revisionNumber)
-    print(response.json())
+    if response.text == "":
+        print("The response is empty")
+    else:
+        print(response.text)
+

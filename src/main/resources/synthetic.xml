@@ -28,10 +28,6 @@
     <property name="environmentName" description="The Apigee environment name" />
   </type>
 
-  <type type="apigee.ApiProxy" extends="udm.BaseDeployed" deployable-type="apigee.ApiProxySpec" container-type="apigee.Environment">
-    <generate-deployable type="apigee.ApiProxySpec" extends="udm.BaseDeployable"/>
-  </type>
-
   <type type="apigee.ApiProxyZip" extends="udm.BaseDeployableArtifact">
     <property name="deleteApiProxyRevisionAfterUndeployment" kind="boolean" default="True" description="Delete the Api Proxy Revision from Apigee after undeployment" />
   </type>

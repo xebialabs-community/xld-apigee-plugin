@@ -8,8 +8,9 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import time 
+import time
 import onetimepass as otp
+from requests_toolbelt import MultipartEncoder
 import requests
 import urllib3
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
@@ -160,7 +161,7 @@ class ApigeeClient(object):
         revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         url = url + "/deployments"
-        print("The URL that is being used to deploy the API Proxy %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment)) 
+        print("The URL that is being used to deploy the API Proxy %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         print(url)
         return self.deploy(url, api_proxy, api_proxy_revision)
 

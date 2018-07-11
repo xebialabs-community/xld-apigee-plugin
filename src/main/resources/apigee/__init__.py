@@ -10,6 +10,7 @@
 
 import time
 import onetimepass as otp
+import urllib3
 import requests
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

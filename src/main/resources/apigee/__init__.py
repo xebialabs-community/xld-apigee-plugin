@@ -110,7 +110,9 @@ class ApigeeClient(object):
 
     def import_sub_type(self, url, params, api_proxy, path):
         filename = path.split('/')[-1]
-        data = {'file': (filename, open(path, 'rb'), 'application/binary')}
+        with open(path, 'rb') as f:
+            zipData = f.read()
+        data = {'file': (filename, zipData, 'application/binary')}
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Content-Type'] = 'multipart/form-data'

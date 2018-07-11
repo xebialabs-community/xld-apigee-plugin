@@ -28,6 +28,5 @@ if previousDeployed.deployable.deleteSharedFlowRevisionAfterUndeployment:
         print(response.text)
 else:
     print("The property deleteSharedFlowRevisionAfterUndeployment is set to False")
-    print("The revision number " + previousDeployed.revisionNumber + " will not be deleted")
     print("The revision number " + previousDeployed.revisionNumber + " of " + previousDeployed.deployable.name + " will not be deleted")
 

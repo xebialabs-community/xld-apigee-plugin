@@ -9,7 +9,6 @@ plugins {
 }
 
 dependencies {
-  jython ":urllib3:1.23"
   jython ":requests:2.19.1"
   jython ":onetimepass:1.0.1"
 }
@@ -39,3 +38,4 @@ processResources.configure {
 }
 
 project.tasks.release.dependsOn(project.tasks.build)
+

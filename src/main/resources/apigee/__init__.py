@@ -12,6 +12,7 @@ import time
 import onetimepass as otp
 import urllib3
 import requests
+from requests_toolbelt.multipart import encoder
 from requests.packages.urllib3.exceptions import SNIMissingWarning, InsecurePlatformWarning, InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -110,18 +111,27 @@ class ApigeeClient(object):
 
     def import_sub_type(self, url, params, api_proxy, path):
         filename = path.split('/')[-1]
-        with open(path, 'rb') as f:
-            zipData = f.read()
-        data = {'file': (filename, zipData, 'application/binary')}
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
-        headers['Content-Type'] = 'multipart/form-data'
+        headers['Prefer'] = 'respond-async'
         print("Posting the file %s" % (filename))
         try:
             if self.mfa:
-                resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+                with open(path, 'rb') as f:
+                    form = encoder.MultipartEncoder({
+                        "documents": (path, f, "application/octet-stream"),
+                        "composite": "NONE",
+                    })
+                    headers['Content-Type'] = form.content_type
+                    resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
             else:
-                resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, files=data)
+                with open(path, 'rb') as f:
+                    form = encoder.MultipartEncoder({
+                        "documents": (path, f, "application/octet-stream"),
+                        "composite": "NONE",
+                    })
+                    headers['Content-Type'] = form.content_type
+                    resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)

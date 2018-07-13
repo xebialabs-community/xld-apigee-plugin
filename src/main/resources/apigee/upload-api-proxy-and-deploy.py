@@ -53,4 +53,3 @@ if revision_name is not None:
         print("There are no multiple revisions of this apiproxy %s deployed to environment %s " % (deployed.deployable.name, deployed.container.environmentName))
 else:
     print("The API Proxy %s is not imported. Therefore we will not deploy it" % (deployed.deployable.name))
-

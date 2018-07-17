@@ -12,14 +12,21 @@ from apigee import ApigeeClient, setup_urllib
 
 setup_urllib()
 
+revision_name = None
 client = ApigeeClient(deployed.container.org, deployed.container)
 response = client.import_shared_flow(deployed.deployable.name, deployed.file.path)
-print(response.json())
-revision_name = response.json()['revision']
-print("Shared flow imported as revision number: " + revision_name)
+try:
+    print response.json()
+    revision_name = response.json()['revision']
+    print("Shared flow imported as revision number: " + revision_name)
+    unwrapped_deployed = unwrap(deployed)
+    unwrapped_deployed.setProperty("revisionNumber", revision_name)
+except ValueError:
+    print("No JSON returned after importing the shared flow %s" % deployed.deployable.name)
 
-unwrapped_deployed = unwrap(deployed)
-unwrapped_deployed.setProperty("revisionNumber", revision_name)
+if revision_name is not None:
+    response = client.deploy_shared_flow(deployed.deployable.name, revision_name)
+    print(response.text)
+else:
+    print("The shared flow %s is not imported. Therefore we will not deploy it" % (deployed.deployable.name))
 
-response = client.deploy_shared_flow(deployed.deployable.name, revision_name)
-print(response.json())

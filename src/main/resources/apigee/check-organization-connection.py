@@ -14,4 +14,8 @@ setup_urllib()
 
 client = ApigeeClient(thisCi)
 response = client.check_organization_connection()
-print(response.json())
+if response.text == "":
+    print("The response is empty")
+else:   
+    print(response.text)
+

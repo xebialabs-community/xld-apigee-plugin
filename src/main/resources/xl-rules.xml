@@ -28,23 +28,6 @@
         </steps>
     </rule>
 
-    <rule name="apigee.DeployApi" scope="deployed">
-        <conditions>
-            <type>apigee.ApiProxy</type>
-            <operation>CREATE</operation>
-            <operation>MODIFY</operation>
-        </conditions>
-        <steps>
-          <jython>
-            <description expression="true">"Deploying api '%s' to environment '%s'" % (deployed.name, deployedApplication.environment.name)</description>
-            <script>apigee/deploy-api-proxy.py</script>
-            <jython-context>
-                <revision_name expression="true">deployedApplication.version.name</revision_name>
-            </jython-context>
-          </jython>
-        </steps>
-    </rule>
-
     <rule name="apigee.UploadSharedFlowAndDeploy" scope="deployed">
         <conditions>
             <type>apigee.DeployedSharedFlowZip</type>
@@ -57,22 +40,6 @@
             <script>apigee/upload-shared-flow-and-deploy.py</script>
             <jython-context>
                 <revision_name expression="true">deployedApplication.version.name</revision_name>
-            </jython-context>
-          </jython>
-        </steps>
-    </rule>
-
-    <rule name="apigee.UndeployApi" scope="deployed">
-        <conditions>
-            <type>apigee.ApiProxy</type>
-            <operation>DESTROY</operation>
-        </conditions>
-        <steps>
-          <jython>
-            <description expression="true">"Undeploying api '%s/%s' to environment '%s'" % (previousDeployedApplication.version.application.name, previousDeployed.name, previousDeployedApplication.environment.name)</description>
-            <script>apigee/undeploy-api-proxy.py</script>
-            <jython-context>
-                <revision_name expression="true">previousDeployedApplication.version.name</revision_name>
             </jython-context>
           </jython>
         </steps>

@@ -4,13 +4,18 @@ plugins {
   id 'java'
   id "com.github.hierynomus.license" version "0.14.0"
   id "com.xebialabs.xldp" version "1.0.5"
-  id 'com.github.hierynomus.jython' version '0.6.0'
-  id 'pl.allegro.tech.build.axion-release' version '1.8.1'
+  id 'com.github.hierynomus.jython' version '0.8.0'
+  id 'pl.allegro.tech.build.axion-release' version '1.9.2'
 }
 
 dependencies {
-  jython ":requests:2.13.0"
   jython ":onetimepass:1.0.1"
+  jython ":certifi:2018.4.16"
+  jython ":chardet:3.0.4"
+  jython ":idna:2.7"
+  jython ":requests:2.19.1"
+  jython ":requests_toolbelt:0.8.0"
+  jython ":urllib3:1.23"
 }
 
 license {
@@ -38,3 +43,4 @@ processResources.configure {
 }
 
 project.tasks.release.dependsOn(project.tasks.build)
+

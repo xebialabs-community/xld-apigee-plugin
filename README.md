@@ -67,5 +67,5 @@ The plugin supports three types of deployables:
 ![Screenshot of Environment](images/environment.jpg)
 ## API Proxy Spec App Configuation
 ![Screenshot of Apigee ApiProxySpec](images/apigee.ApiProxyZip.jpg)
-## Exmaple Deployment
+## Example Deployment
 ![Screenshot of Deployment](images/deployment.jpg)

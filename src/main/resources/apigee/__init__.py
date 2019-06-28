@@ -50,9 +50,9 @@ class ApigeeClient(object):
         self.sso_login_url = "https://login.apigee.com/oauth/token"
         self.proxy_dict = None
         if organization.proxy:
-            address = organization.proxy.address
-            idx = address.index(':')
-            self.proxy_dict = {address[0:idx]: address + ":" + str(organization.proxy.port)}
+            self.proxy_dict = {'http' : organization.proxy.address + ":" + str(organization.proxy.port), 'https': organization.proxy.address + ":" + str(organization.proxy.port)}
+            print("The proxy is: ")
+            print(self.proxy_dict)
 
     def check_organization_connection(self):
         url = self.build_org_url()

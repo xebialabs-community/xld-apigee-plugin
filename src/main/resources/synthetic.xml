@@ -20,6 +20,8 @@
     <property name="password" password="true" description="The password to connect to this Apigee organization" />
     <property name="mfa" kind="boolean" default="False" description="Multi factor authentication is on" />
     <property name="secretKey" password="true" required="false" description="The OTP secret key for Apigee. Required when MFA is on" />
+    <property name="seamless" kind="boolean" default="False" description="Use seamless deploy of versions" />
+    <property name="delay" default="15" required="false" description="Seconds to wait before the old version is undeployed. Required when seamless is on" />      
     <method name="CheckConnection" delegate="jythonScript" description="Check connection for Apigee organization" script="apigee/check-organization-connection.py" />
   </type>
 

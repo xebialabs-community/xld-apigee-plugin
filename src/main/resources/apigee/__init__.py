@@ -81,8 +81,6 @@ class ApigeeClient(object):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + apiProxyName + '/deployments'
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to get the revision numbers deployed to environment:")
         print(url)
         authorization_headers = self.build_authorization_header()
@@ -102,8 +100,6 @@ class ApigeeClient(object):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + apiProxyName + '/deployments'
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         authorization_headers = self.build_authorization_header()
         print("Get revision numbers: \n")
         print(url)
@@ -197,8 +193,6 @@ class ApigeeClient(object):
         revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to deploy the API Proxy %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         print(url)
         return self.deploy(url, api_proxy, api_proxy_revision)
@@ -207,14 +201,14 @@ class ApigeeClient(object):
         revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to deploy the shared flow %s/%s to environment %s" % (shared_flow, shared_flow_revision, self.target_environment))
         print(url)
         return self.deploy(url, shared_flow, shared_flow_revision)
 
     def deploy(self, url, api_proxy, api_proxy_revision):
         params = {'override': 'true'}
+        if self.seamless:
+            params = {'override': 'true', 'delay': self.organization.delay}
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -233,8 +227,6 @@ class ApigeeClient(object):
         revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to undeploy the API Proxy %s/%s from environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         print(url)
         return self.undeploy(url, api_proxy, api_proxy_revision)
@@ -243,8 +235,6 @@ class ApigeeClient(object):
         revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to undeploy the shared flow %s/%s from environment %s" % (shared_flow, shared_flow_revision, self.target_environment))
         print(url)
         return self.undeploy(url, shared_flow, shared_flow_revision)

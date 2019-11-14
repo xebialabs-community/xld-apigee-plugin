@@ -141,7 +141,7 @@ class ApigeeClient(object):
                 with open(path, 'rb') as f:
                     form = encoder.MultipartEncoder({
                         "documents": (path, f, "application/octet-stream"),
-                        "composite": "NONE",
+                        "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
                     resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
@@ -149,7 +149,7 @@ class ApigeeClient(object):
                 with open(path, 'rb') as f:
                     form = encoder.MultipartEncoder({
                         "documents": (path, f, "application/octet-stream"),
-                        "composite": "NONE",
+                        "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
                     resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)

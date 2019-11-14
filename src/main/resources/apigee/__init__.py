@@ -209,6 +209,8 @@ class ApigeeClient(object):
         params = {'override': 'true'}
         if self.seamless:
             params = {'override': 'true', 'delay': self.organization.delay}
+        print("Params: \n")
+        print(params)
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Content-Type'] = 'application/x-www-form-urlencoded'

@@ -81,25 +81,6 @@ class ApigeeClient(object):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + apiProxyName + '/deployments'
-        print("The URL that is being used to get the revision numbers deployed to environment:")
-        print(url)
-        authorization_headers = self.build_authorization_header()
-        headers = authorization_headers
-        try:
-            if self.mfa:
-                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
-            else:
-                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
-            resp.raise_for_status()
-        except requests.exceptions.HTTPError:
-            print_response(resp)
-            raise Exception("Error during getting the revision numbers deployed to environment %s" % (self.target_environment))
-        return resp
-
-    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
-        url = self.build_org_url()
-        url = url + "/environments/" + self.target_environment
-        url = url + "/apis/" + apiProxyName + '/deployments'
         authorization_headers = self.build_authorization_header()
         print("Get revision numbers: \n")
         print(url)

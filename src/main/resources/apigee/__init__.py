@@ -254,7 +254,7 @@ class ApigeeClient(object):
             raise Exception("Error during checking time-based token. The secret key of the Apigee organization %s is empty" % (self.organization.organizationName))
         print("Checking the time-based token")
         is_valid = otp.valid_totp(token=my_token, secret=my_secret)
-        print("check time based token:")  
+        print("Check time based token:")  
         print(is_valid)
         return is_valid
 

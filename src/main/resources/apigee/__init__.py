@@ -85,7 +85,7 @@ class ApigeeClient(object):
         url = url + "/environments/" + self.target_environment
         url = url + "/apis/" + api_proxy_name + '/deployments'
         authorization_headers = self.build_authorization_header()
-        print("Get revision numbers: \n")
+        print("The URL that is being used to get the deployed revision numbers of %s for environment %s" % (api_proxy_name, self.target_environment))
         print(url)
         headers = authorization_headers
         if self.mfa:

@@ -68,9 +68,9 @@ class ApigeeClient(object):
                     time.sleep(3)
                     authorization_headers = self.build_authorization_header()
                     headers = authorization_headers
-                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -87,10 +87,10 @@ class ApigeeClient(object):
         headers = authorization_headers
         if self.mfa:
             print("Multi factor authentication is on")
-            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
         else:
             print("Multi factor authentication is off")
-            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
@@ -125,7 +125,7 @@ class ApigeeClient(object):
                         "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
-                    resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
+                    resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form, timeout=60)
             else:
                 with open(path, 'rb') as f:
                     form = encoder.MultipartEncoder({
@@ -133,7 +133,7 @@ class ApigeeClient(object):
                         "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
-                    resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
+                    resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -161,9 +161,9 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -197,9 +197,9 @@ class ApigeeClient(object):
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
         try:
             if self.mfa:
-                resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -227,9 +227,9 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -268,7 +268,7 @@ class ApigeeClient(object):
             headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ' + authorizationHeader}
             params = {'username': self.organization.username, 'password': self.organization.password, 'grant_type': 'password', 'mfa_token': my_token}
             try:
-                resp = requests.post(self.sso_login_url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(self.sso_login_url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
                 resp.raise_for_status()
             except requests.exceptions.HTTPError:
                 print_response(resp)

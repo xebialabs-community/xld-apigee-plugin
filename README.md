@@ -59,13 +59,24 @@ The plugin supports three types of deployables:
 + `apigee.ApiProxyZip`
 + `apigee.DeployedSharedFlowZip`
 + `apigee.SharedFlowZip`
+
+
 ## Apigee Org Configuation
 ![Screenshot of Apigee Organization](images/apigee-Organization.jpg)
+
 ## Apigee Environment Configuation
 ![Screenshot of Apigee Organization](images/apigee-Environment.jpg)
+
 ## UDM Environment Configuation
 ![Screenshot of Environment](images/environment.jpg)
+
 ## API Proxy Spec App Configuation
 ![Screenshot of Apigee ApiProxySpec](images/apigee.ApiProxyZip.jpg)
+
 ## Example Deployment
 ![Screenshot of Deployment](images/deployment.jpg)
+
+## Example of Http Proxy
+![Screenshot of Deployment](images/overthere.HttpProxy.png)
+
+

@@ -24,10 +24,12 @@ def setup_urllib():
     requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
 def parse_revision(revision):
     if revision.startswith('rev'):
         return revision[3:]
     return revision
+
 
 def print_response(response):
     print("response code:")
@@ -37,6 +39,7 @@ def print_response(response):
         print response.json()
     except ValueError:
         print "No JSON returned"
+
 
 class ApigeeClient(object):
 
@@ -51,7 +54,7 @@ class ApigeeClient(object):
         self.sso_login_url = "https://login.apigee.com/oauth/token"
         self.proxy_dict = None
         if organization.proxy:
-            self.proxy_dict = {'http' : organization.proxy.address + ":" + str(organization.proxy.port), 'https': organization.proxy.address + ":" + str(organization.proxy.port)}
+            self.proxy_dict = {'http': organization.proxy.address + ":" + str(organization.proxy.port), 'https': organization.proxy.address + ":" + str(organization.proxy.port)}
             print("The proxy is: ")
             print(self.proxy_dict)
 
@@ -74,7 +77,7 @@ class ApigeeClient(object):
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
-            raise Exception("Error during checking the connection of Apigee organization %s" % (self.organization.organizationName))
+            raise Exception("Error during checking the connection of Apigee organization %s" % self.organization.organizationName)
         return resp
 
     def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
@@ -116,7 +119,7 @@ class ApigeeClient(object):
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Prefer'] = 'respond-async'
-        print("Posting the file %s" % (filename))
+        print("Posting the file %s" % filename)
         try:
             if self.mfa:
                 with open(path, 'rb') as f:
@@ -137,7 +140,7 @@ class ApigeeClient(object):
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
-            raise Exception("Error during importing of Apigee: %s" % (api_proxy))
+            raise Exception("Error during importing of Apigee: %s" % api_proxy)
         return resp
 
     def delete_api_proxy_revision(self, api_proxy, api_proxy_revision):
@@ -239,7 +242,7 @@ class ApigeeClient(object):
     def create_time_based_token(self):
         my_secret = self.organization.secretKey
         if my_secret is None:
-            raise Exception("Error during creating time based token. The secret key of the Apigee organization %s is empty" % (self.organization.organizationName))
+            raise Exception("Error during creating time based token. The secret key of the Apigee organization %s is empty" % self.organization.organizationName)
         print("Creating the time-based token")
         my_token = otp.get_totp(my_secret)
         self.token = my_token
@@ -251,7 +254,7 @@ class ApigeeClient(object):
         my_token = self.token
         my_secret = self.organization.secretKey
         if my_secret is None:
-            raise Exception("Error during checking time-based token. The secret key of the Apigee organization %s is empty" % (self.organization.organizationName))
+            raise Exception("Error during checking time-based token. The secret key of the Apigee organization %s is empty" % self.organization.organizationName)
         print("Checking the time-based token")
         is_valid = otp.valid_totp(token=my_token, secret=my_secret)
         print("Check time based token:")  
@@ -263,7 +266,7 @@ class ApigeeClient(object):
         resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False)
         authorization_headers = {}
         if self.mfa:
-            print("Multi factor authentication is turned on for this Apigee account %s" % (self.organization.organizationName))
+            print("Multi factor authentication is turned on for this Apigee account %s" % self.organization.organizationName)
             my_token = self.create_time_based_token()
             headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ' + authorizationHeader}
             params = {'username': self.organization.username, 'password': self.organization.password, 'grant_type': 'password', 'mfa_token': my_token}
@@ -277,7 +280,7 @@ class ApigeeClient(object):
             access_token = data['access_token']
             authorization_headers = {'Authorization': 'Bearer ' + access_token}
         else:
-            print("Multi factor authentication is turned off for this Apigee account %s" % (self.organization.organizationName))
+            print("Multi factor authentication is turned off for this Apigee account %s" % self.organization.organizationName)
         return authorization_headers
 
     def build_org_url(self):

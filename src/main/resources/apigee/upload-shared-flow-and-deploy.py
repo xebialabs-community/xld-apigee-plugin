@@ -23,10 +23,10 @@ try:
     unwrapped_deployed.setProperty("revisionNumber", revision_name)
 except ValueError:
     print("No JSON returned after importing the shared flow %s" % deployed.deployable.name)
+    print(response.text)
 
 if revision_name is not None:
     response = client.deploy_shared_flow(deployed.deployable.name, revision_name)
     print(response.text)
 else:
     print("The shared flow %s is not imported. Therefore we will not deploy it" % (deployed.deployable.name))
-

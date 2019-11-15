@@ -263,7 +263,7 @@ class ApigeeClient(object):
 
     def build_authorization_header(self):
         # Check the connection with an http head request. Otherwise, the password is printed when mfa is on.
-        resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False)
+        resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False, timeout=60)
         authorization_headers = {}
         if self.mfa:
             print("Multi factor authentication is turned on for this Apigee account %s" % self.organization.organizationName)

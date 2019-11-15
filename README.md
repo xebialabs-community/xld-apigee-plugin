@@ -39,7 +39,7 @@ The Apigee plugin is a XL Deploy plugin that adds capability for deploying appli
 
 ## Usage
 
-1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` and fill in the properties.
+1. Go to `Repository - Infrastructure`, create a new `apigee.Organization` and fill in the properties. If needed, create also a `overthere.HttpProxy` and refer to it. See the end of the page for an example.
 2. Go to `Repository - Infrastructure - <Apigee Organization>`, create a new `apigee.Environment` and fill in the Apigee environment name.
 3. Repeat the previous step for all the Apigee environments that belong to this Apigee organization.
 4. Create an environment under `Repository - Environments` and add the corresponding `<Apigee Environment>` as container.

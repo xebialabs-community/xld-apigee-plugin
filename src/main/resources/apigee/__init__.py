@@ -279,6 +279,8 @@ class ApigeeClient(object):
             data = resp.json()
             access_token = data['access_token']
             authorization_headers = {'Authorization': 'Bearer ' + access_token}
+            print("Is token valid?")
+            print(otp.valid_totp(token=my_token, secret=self.organization.secretKey))  
         else:
             print("Multi factor authentication is turned off for this Apigee account %s" % self.organization.organizationName)
         return authorization_headers

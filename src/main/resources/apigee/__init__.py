@@ -80,10 +80,10 @@ class ApigeeClient(object):
             raise Exception("Error during checking the connection of Apigee organization %s" % self.organization.organizationName)
         return resp
 
-    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
+    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, api_proxy_name):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
-        url = url + "/apis/" + apiProxyName + '/deployments'
+        url = url + "/apis/" + api_proxy_name + '/deployments'
         authorization_headers = self.build_authorization_header()
         print("Get revision numbers: \n")
         print(url)
@@ -97,7 +97,7 @@ class ApigeeClient(object):
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during checking the connection of Apigee organization")
+            raise Exception("Error during getting the deployed revision numbers of %s for environment %s" % (api_proxy_name, self.target_environment))
         return resp
 
     def import_api_proxy(self, api_proxy, path):

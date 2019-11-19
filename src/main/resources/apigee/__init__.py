@@ -40,6 +40,10 @@ def print_response(response):
     except ValueError:
         print "No JSON returned"
 
+def make_token_six_digits(token):
+    if len(str(token)) == 5:
+        token = "0%s" % token
+    return token
 
 class ApigeeClient(object):
 
@@ -240,15 +244,24 @@ class ApigeeClient(object):
         return resp
 
     def create_time_based_token(self):
+        danger_time_interval_in_seconds = 7
         my_secret = self.organization.secretKey
         if my_secret is None:
             raise Exception("Error during creating time based token. The secret key of the Apigee organization %s is empty" % self.organization.organizationName)
         print("Creating the time-based token")
         my_token = otp.get_totp(my_secret)
+        my_token = make_token_six_digits(my_token)
         self.token = my_token
-        if len(str(my_token)) == 5:
-            my_token = "0%s" % my_token
-        return my_token
+        # Let's verify if the token is still valid after some seconds and we are nog switching to new interval
+        my_token2 = otp.get_totp(my_secret, clock=(int(time.time()) + danger_time_interval_in_seconds))
+        my_token2 = make_token_six_digits(my_token2)
+        if my_token == my_token2:
+            return my_token
+        else:
+            print("Waiting for the next time interval")
+            time.sleep(danger_time_interval_in_seconds)
+            self.token = my_token2
+            return my_token2
 
     def check_time_based_token(self):
         my_token = self.token

@@ -24,10 +24,12 @@ def setup_urllib():
     requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
 def parse_revision(revision):
     if revision.startswith('rev'):
         return revision[3:]
     return revision
+
 
 def print_response(response):
     print("response code:")
@@ -37,6 +39,11 @@ def print_response(response):
         print response.json()
     except ValueError:
         print "No JSON returned"
+
+def make_token_six_digits(token):
+    if len(str(token)) == 5:
+        token = "0%s" % token
+    return token
 
 class ApigeeClient(object):
 
@@ -51,7 +58,7 @@ class ApigeeClient(object):
         self.sso_login_url = "https://login.apigee.com/oauth/token"
         self.proxy_dict = None
         if organization.proxy:
-            self.proxy_dict = {'http' : organization.proxy.address + ":" + str(organization.proxy.port), 'https': organization.proxy.address + ":" + str(organization.proxy.port)}
+            self.proxy_dict = {'http': organization.proxy.address + ":" + str(organization.proxy.port), 'https': organization.proxy.address + ":" + str(organization.proxy.port)}
             print("The proxy is: ")
             print(self.proxy_dict)
 
@@ -63,61 +70,33 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                if not self.check_time_based_token():
-                    print("Sleep for 3 seconds")
-                    time.sleep(3)
-                    authorization_headers = self.build_authorization_header()
-                    headers = authorization_headers
-                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
-            raise Exception("Error during checking the connection of Apigee organization %s" % (self.organization.organizationName))
+            raise Exception("Error during checking the connection of Apigee organization %s" % self.organization.organizationName)
         return resp
 
-    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
+    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, api_proxy_name):
         url = self.build_org_url()
         url = url + "/environments/" + self.target_environment
-        url = url + "/apis/" + apiProxyName + '/deployments'
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
-        print("The URL that is being used to get the revision numbers deployed to environment:")
-        print(url)
+        url = url + "/apis/" + api_proxy_name + '/deployments'
         authorization_headers = self.build_authorization_header()
-        headers = authorization_headers
-        try:
-            if self.mfa:
-                resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
-            else:
-                resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
-            resp.raise_for_status()
-        except requests.exceptions.HTTPError:
-            print_response(resp)
-            raise Exception("Error during getting the revision numbers deployed to environment %s" % (self.target_environment))
-        return resp
-
-    def get_revision_numbers_of_apiproxy_deployed_to_environment(self, apiProxyName):
-        url = self.build_org_url()
-        url = url + "/environments/" + self.target_environment
-        url = url + "/apis/" + apiProxyName + '/deployments'
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
-        authorization_headers = self.build_authorization_header()
-        print("Get revision numbers: \n")
+        print("The URL that is being used to get the deployed revision numbers of %s for environment %s" % (api_proxy_name, self.target_environment))
         print(url)
         headers = authorization_headers
         if self.mfa:
             print("Multi factor authentication is on")
-            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers)
+            resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
         else:
             print("Multi factor authentication is off")
-            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers)
+            resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
         if resp.status_code > 399:
             print(resp.status_code)
             print(resp.json())
-            raise Exception("Error during checking the connection of Apigee organization")
+            raise Exception("Error during getting the deployed revision numbers of %s for environment %s" % (api_proxy_name, self.target_environment))
         return resp
 
     def import_api_proxy(self, api_proxy, path):
@@ -139,28 +118,28 @@ class ApigeeClient(object):
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Prefer'] = 'respond-async'
-        print("Posting the file %s" % (filename))
+        print("Posting the file %s" % filename)
         try:
             if self.mfa:
                 with open(path, 'rb') as f:
                     form = encoder.MultipartEncoder({
                         "documents": (path, f, "application/octet-stream"),
-                        "composite": "NONE",
+                        "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
-                    resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
+                    resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form, timeout=60)
             else:
                 with open(path, 'rb') as f:
                     form = encoder.MultipartEncoder({
                         "documents": (path, f, "application/octet-stream"),
-                        "composite": "NONE",
+                        "composite": "NONE"
                     })
                     headers['Content-Type'] = form.content_type
-                    resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form)
+                    resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, data=form, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
-            raise Exception("Error during importing of Apigee: %s" % (api_proxy))
+            raise Exception("Error during importing of Apigee: %s" % api_proxy)
         return resp
 
     def delete_api_proxy_revision(self, api_proxy, api_proxy_revision):
@@ -184,9 +163,9 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication, timeout=60)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -197,8 +176,6 @@ class ApigeeClient(object):
         revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to deploy the API Proxy %s/%s to environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         print(url)
         return self.deploy(url, api_proxy, api_proxy_revision)
@@ -207,22 +184,24 @@ class ApigeeClient(object):
         revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to deploy the shared flow %s/%s to environment %s" % (shared_flow, shared_flow_revision, self.target_environment))
         print(url)
         return self.deploy(url, shared_flow, shared_flow_revision)
 
     def deploy(self, url, api_proxy, api_proxy_revision):
         params = {'override': 'true'}
+        if self.seamless:
+            params = {'override': 'true', 'delay': self.organization.delay}
+        print("Params: \n")
+        print(params)
         authorization_headers = self.build_authorization_header()
         headers = authorization_headers
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
         try:
             if self.mfa:
-                resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=900)
             else:
-                resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(url, auth=self.authentication, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=900)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -233,8 +212,6 @@ class ApigeeClient(object):
         revision = parse_revision(api_proxy_revision)
         url = self.build_api_proxy_url(api_proxy, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to undeploy the API Proxy %s/%s from environment %s" % (api_proxy, api_proxy_revision, self.target_environment))
         print(url)
         return self.undeploy(url, api_proxy, api_proxy_revision)
@@ -243,8 +220,6 @@ class ApigeeClient(object):
         revision = parse_revision(shared_flow_revision)
         url = self.build_shared_flow_url(shared_flow, revision)
         url = url + "/deployments"
-        if self.seamless:
-          url = url + '?override=true&delay=' + self.organization.delay
         print("The URL that is being used to undeploy the shared flow %s/%s from environment %s" % (shared_flow, shared_flow_revision, self.target_environment))
         print(url)
         return self.undeploy(url, shared_flow, shared_flow_revision)
@@ -254,9 +229,9 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=900)
             else:
-                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication)
+                resp = requests.delete(url, proxies=self.proxy_dict, verify=False, auth=self.authentication, timeout=900)
             resp.raise_for_status()
         except requests.exceptions.HTTPError:
             print_response(resp)
@@ -264,46 +239,56 @@ class ApigeeClient(object):
         return resp
 
     def create_time_based_token(self):
+        danger_time_interval_in_seconds = 7
         my_secret = self.organization.secretKey
         if my_secret is None:
-            raise Exception("Error during creating time based token. The secret key of the Apigee organization %s is empty" % (self.organization.organizationName))
+            raise Exception("Error during creating time based token. The secret key of the Apigee organization %s is empty" % self.organization.organizationName)
         print("Creating the time-based token")
         my_token = otp.get_totp(my_secret)
+        my_token = make_token_six_digits(my_token)
         self.token = my_token
-        if len(str(my_token)) == 5:
-            my_token = "0%s" % my_token
-        return my_token
+        # Let's verify if the token is still valid after some seconds and we are nog switching to new interval
+        my_token2 = otp.get_totp(my_secret, clock=(int(time.time()) + danger_time_interval_in_seconds))
+        my_token2 = make_token_six_digits(my_token2)
+        if my_token == my_token2:
+            return my_token
+        else:
+            print("Waiting for the next time interval")
+            time.sleep(danger_time_interval_in_seconds)
+            self.token = my_token2
+            return my_token2
 
     def check_time_based_token(self):
         my_token = self.token
         my_secret = self.organization.secretKey
         if my_secret is None:
-            raise Exception("Error during checking time-based token. The secret key of the Apigee organization %s is empty" % (self.organization.organizationName))
+            raise Exception("Error during checking time-based token. The secret key of the Apigee organization %s is empty" % self.organization.organizationName)
         print("Checking the time-based token")
         is_valid = otp.valid_totp(token=my_token, secret=my_secret)
+        print("Check time based token:")  
         print(is_valid)
         return is_valid
 
     def build_authorization_header(self):
         # Check the connection with an http head request. Otherwise, the password is printed when mfa is on.
-        resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False)
+        resp = requests.head(self.sso_login_url, proxies=self.proxy_dict, verify=False, timeout=60)
         authorization_headers = {}
         if self.mfa:
-            print("Multi factor authentication is turned on for this Apigee account %s" % (self.organization.organizationName))
+            print("Multi factor authentication is turned on for this Apigee account %s" % self.organization.organizationName)
             my_token = self.create_time_based_token()
             headers = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', 'Accept': 'application/json;charset=utf-8', 'Authorization': 'Basic ' + authorizationHeader}
             params = {'username': self.organization.username, 'password': self.organization.password, 'grant_type': 'password', 'mfa_token': my_token}
             try:
-                resp = requests.post(self.sso_login_url, params=params, proxies=self.proxy_dict, verify=False, headers=headers)
+                resp = requests.post(self.sso_login_url, params=params, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
                 resp.raise_for_status()
             except requests.exceptions.HTTPError:
                 print_response(resp)
                 raise Exception("Error during creating authorization header")
             data = resp.json()
             access_token = data['access_token']
-            authorization_headers = {'Authorization': 'Bearer ' + access_token}
+            authorization_headers = {'Authorization': 'Bearer ' + access_token} 
         else:
-            print("Multi factor authentication is turned off for this Apigee account %s" % (self.organization.organizationName))
+            print("Multi factor authentication is turned off for this Apigee account %s" % self.organization.organizationName)
         return authorization_headers
 
     def build_org_url(self):

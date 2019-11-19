@@ -24,6 +24,7 @@ try:
     unwrapped_deployed.setProperty("revisionNumber", revision_name)
 except ValueError:
     print("No JSON returned after importing the API Proxy %s" % (deployed.deployable.name))
+    print(response.text)
 
 if revision_name is not None:
     response = client.deploy_api_proxy(deployed.deployable.name, revision_name)
@@ -46,9 +47,12 @@ if revision_name is not None:
                 response = client.undeploy_api_proxy(deployed.deployable.name, revisionNumber)
             i += 1
         response = client.get_revision_numbers_of_apiproxy_deployed_to_environment(deployed.deployable.name)
-        jsonData = json.loads(response.text)
-        print("Deployed revision: \n")
-        print(jsonData)
+        if response.text == "":
+            print("The response is empty")
+        else:
+            jsonData = json.loads(response.text)
+            print("Deployed revision: \n")
+            print(jsonData)
     else:
         print("There are no multiple revisions of this apiproxy %s deployed to environment %s " % (deployed.deployable.name, deployed.container.environmentName))
 else:

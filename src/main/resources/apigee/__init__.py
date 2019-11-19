@@ -70,11 +70,6 @@ class ApigeeClient(object):
         headers = authorization_headers
         try:
             if self.mfa:
-                if not self.check_time_based_token():
-                    print("Sleep for 3 seconds")
-                    time.sleep(3)
-                    authorization_headers = self.build_authorization_header()
-                    headers = authorization_headers
                 resp = requests.get(url, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
             else:
                 resp = requests.get(url, auth=self.authentication, proxies=self.proxy_dict, verify=False, headers=headers, timeout=60)
